@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
-import { Eye, Clock } from "lucide-react";
+import { Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Tables } from "@/integrations/supabase/types";
 
@@ -17,13 +17,6 @@ interface VideoCardProps {
 const VideoCard = ({ video }: VideoCardProps) => {
   const navigate = useNavigate();
 
-  const formatDuration = (seconds: number | null) => {
-    if (!seconds) return "0:00";
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  };
-
   const formatViews = (views: number | null) => {
     if (!views) return "0 views";
     if (views < 1000) return `${views} views`;
@@ -38,15 +31,15 @@ const VideoCard = ({ video }: VideoCardProps) => {
   return (
     <div 
       onClick={handleVideoClick}
-      className="video-card bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-750 transition-colors cursor-pointer group"
+      className="video-card"
     >
       <div className="relative">
-        <div className="aspect-video bg-gray-700">
+        <div className="aspect-video bg-gray-800">
           {video.thumbnail_url ? (
             <img
               src={video.thumbnail_url}
               alt={video.title}
-              className="video-thumbnail w-full h-full object-cover"
+              className="video-thumbnail"
               loading="lazy"
             />
           ) : (
@@ -54,48 +47,40 @@ const VideoCard = ({ video }: VideoCardProps) => {
               <span className="text-4xl">🎥</span>
             </div>
           )}
-          <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded-md flex items-center space-x-1">
-            <Clock className="h-3 w-3" />
-            <span>{formatDuration(video.duration)}</span>
-          </div>
         </div>
       </div>
       
-      <div className="video-info p-3">
-        <div className="flex space-x-3">
-          <div className="flex-shrink-0">
-            <div className="w-9 h-9 bg-gray-600 rounded-full flex items-center justify-center">
-              {video.profiles?.avatar_url ? (
-                <img
-                  src={video.profiles.avatar_url}
-                  alt={video.profiles.username || "User"}
-                  className="w-full h-full rounded-full object-cover"
-                  loading="lazy"
-                />
-              ) : (
-                <span className="text-sm">
-                  {video.profiles?.username?.[0]?.toUpperCase() || "U"}
-                </span>
-              )}
+      <div className="video-info">
+        <div className="video-avatar bg-gray-700">
+          {video.profiles?.avatar_url ? (
+            <img
+              src={video.profiles.avatar_url}
+              alt={video.profiles.username || ""}
+              className="w-full h-full rounded-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <div className="w-full h-full rounded-full flex items-center justify-center text-gray-400">
+              {video.profiles?.username?.[0]?.toUpperCase() || "U"}
             </div>
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="video-title text-white font-medium line-clamp-2 group-hover:text-red-400 transition-colors">
-              {video.title}
-            </h3>
-            <p className="text-sm text-gray-400 mt-1 truncate">
+          )}
+        </div>
+
+        <div className="video-details">
+          <h3 className="video-title text-white">
+            {video.title}
+          </h3>
+          <div className="video-meta">
+            <p className="text-gray-400">
               {video.profiles?.username || "Anonymous"}
             </p>
-            <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">
-              <div className="flex items-center">
-                <Eye className="h-3 w-3 mr-1" />
-                <span>{formatViews(video.views)}</span>
-              </div>
+            <p className="flex items-center space-x-1">
+              <span>{formatViews(video.views)}</span>
               <span>•</span>
               <span>
                 {formatDistanceToNow(new Date(video.created_at || ""), { addSuffix: true })}
               </span>
-            </div>
+            </p>
           </div>
         </div>
       </div>
