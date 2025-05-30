@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import VideoCard from "./VideoCard";
@@ -21,7 +20,6 @@ const VideoFeed = () => {
 
   const fetchVideos = async () => {
     try {
-      // First get videos
       const { data: videosData, error: videosError } = await supabase
         .from("videos")
         .select("*")
@@ -29,7 +27,6 @@ const VideoFeed = () => {
 
       if (videosError) throw videosError;
 
-      // Then get profiles for each video
       const videosWithProfiles = await Promise.all(
         (videosData || []).map(async (video) => {
           const { data: profileData } = await supabase
@@ -56,25 +53,28 @@ const VideoFeed = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-gray-400 text-base md:text-lg">Loading videos...</div>
+        <div className="text-gray-400 text-lg animate-pulse">Loading videos...</div>
       </div>
     );
   }
 
   if (videos.length === 0) {
     return (
-      <div className="text-center py-8 md:py-12 px-4">
-        <div className="text-gray-400 text-base md:text-lg">No videos uploaded yet</div>
-        <div className="text-gray-500 text-sm md:text-base mt-2">Be the first to share a video!</div>
+      <div className="text-center py-12 px-4">
+        <div className="text-6xl mb-4">📺</div>
+        <div className="text-gray-400 text-lg mb-2">No videos yet</div>
+        <div className="text-gray-500 text-sm">Be the first to share something amazing!</div>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
-      {videos.map((video) => (
-        <VideoCard key={video.id} video={video} />
-      ))}
+    <div className="main-content pb-20 md:pb-6">
+      <div className="video-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+        {videos.map((video) => (
+          <VideoCard key={video.id} video={video} />
+        ))}
+      </div>
     </div>
   );
 };

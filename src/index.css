@@ -35,19 +35,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -98,4 +91,93 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .video-grid {
+    @apply grid-cols-1 gap-4;
+  }
+
+  .video-card {
+    @apply rounded-xl shadow-lg overflow-hidden;
+  }
+
+  .video-thumbnail {
+    @apply aspect-video object-cover w-full;
+  }
+
+  .video-info {
+    @apply p-4 space-y-2;
+  }
+
+  .video-title {
+    @apply text-base font-semibold line-clamp-2;
+  }
+
+  .video-meta {
+    @apply text-sm text-gray-400;
+  }
+
+  .header-nav {
+    @apply fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-2;
+    z-index: 50;
+  }
+
+  .mobile-menu {
+    @apply flex justify-around items-center;
+  }
+
+  .mobile-menu-item {
+    @apply flex flex-col items-center text-xs text-gray-400;
+  }
+
+  .mobile-menu-icon {
+    @apply mb-1 h-5 w-5;
+  }
+
+  /* Adjust main content padding for bottom nav */
+  .main-content {
+    @apply pb-16;
+  }
+
+  /* Modal adjustments */
+  .modal-content {
+    @apply mx-4 max-h-[90vh];
+  }
+
+  /* Form controls */
+  .form-input {
+    @apply h-12 text-base;
+  }
+
+  .form-button {
+    @apply h-12 text-base;
+  }
+
+  /* Video player page */
+  .video-player-container {
+    @apply -mx-4;
+  }
+
+  .video-details {
+    @apply px-4 mt-4;
+  }
+}
+
+/* Enhanced scrollbars */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
 }

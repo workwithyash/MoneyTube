@@ -1,6 +1,5 @@
-
 import { Button } from "@/components/ui/button";
-import { Upload, User, Video, Coins, Menu } from "lucide-react";
+import { Upload, User, Video, Coins, Menu, Home, Gift } from "lucide-react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import CoinsDisplay from "./CoinsDisplay";
 import { useState } from "react";
@@ -19,59 +18,54 @@ const Header = ({ user, onSignIn, onSignOut, onUpload, onClaimReward, onWithdraw
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-gray-900 border-b border-gray-800 px-3 md:px-6 py-3 md:py-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-lg md:text-2xl font-bold text-red-500">VideoTube</h1>
-        </div>
-        
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-4">
-          {user && <CoinsDisplay user={user} />}
+    <>
+      {/* Desktop Header */}
+      <header className="bg-gray-900 border-b border-gray-800 px-4 py-3 hidden md:block">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-2xl font-bold text-red-500">VideoTube</h1>
+          </div>
           
-          {user ? (
-            <div className="flex items-center space-x-4">
-              <Button
-                onClick={onClaimReward}
-                className="bg-yellow-600 hover:bg-yellow-700 text-white"
-                size="sm"
-              >
-                🎁 Claim Reward
-              </Button>
+          <div className="flex items-center space-x-4">
+            {user && <CoinsDisplay user={user} />}
+            
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <Button
+                  onClick={onClaimReward}
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white"
+                  size="sm"
+                >
+                  🎁 Claim Reward
+                </Button>
 
-              <Button
-                onClick={onWithdraw}
-                className="bg-green-600 hover:bg-green-700 text-white"
-                size="sm"
-              >
-                <Coins className="h-4 w-4 mr-1" />
-                Withdraw
-              </Button>
+                <Button
+                  onClick={onWithdraw}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                  size="sm"
+                >
+                  <Coins className="h-4 w-4 mr-1" />
+                  Withdraw
+                </Button>
 
-              <Button
-                onClick={onMyVideos}
-                variant="outline"
-                size="sm"
-                className="border-gray-600 text-gray-300 hover:bg-gray-700"
-              >
-                <Video className="h-4 w-4 mr-1" />
-                My Videos
-              </Button>
-              
-              <Button
-                onClick={onUpload}
-                className="bg-red-600 hover:bg-red-700 text-white"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Upload
-              </Button>
-              
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                  <span className="text-sm text-white">
-                    {user.email?.[0]?.toUpperCase()}
-                  </span>
-                </div>
+                <Button
+                  onClick={onMyVideos}
+                  variant="outline"
+                  size="sm"
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                >
+                  <Video className="h-4 w-4 mr-1" />
+                  My Videos
+                </Button>
+                
+                <Button
+                  onClick={onUpload}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload
+                </Button>
+                
                 <Button
                   onClick={onSignOut}
                   variant="ghost"
@@ -81,119 +75,81 @@ const Header = ({ user, onSignIn, onSignOut, onUpload, onClaimReward, onWithdraw
                   Sign Out
                 </Button>
               </div>
-            </div>
-          ) : (
-            <Button
-              onClick={onSignIn}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Sign In
-            </Button>
-          )}
+            ) : (
+              <Button
+                onClick={onSignIn}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                Sign In
+              </Button>
+            )}
+          </div>
         </div>
+      </header>
 
-        {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center space-x-2">
+      {/* Mobile Header */}
+      <header className="bg-gray-900 border-b border-gray-800 px-4 py-3 md:hidden sticky top-0 z-50">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-red-500">VideoTube</h1>
           {user && <CoinsDisplay user={user} />}
-          <Button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            variant="ghost"
-            size="sm"
-            className="text-gray-300 hover:text-white"
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile Navigation Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden mt-4 pt-4 border-t border-gray-800">
-          {user ? (
-            <div className="space-y-3">
-              <Button
-                onClick={() => {
-                  onClaimReward();
-                  setMobileMenuOpen(false);
-                }}
-                className="bg-yellow-600 hover:bg-yellow-700 text-white w-full"
-                size="sm"
-              >
-                🎁 Claim Reward
-              </Button>
-
-              <Button
-                onClick={() => {
-                  onWithdraw();
-                  setMobileMenuOpen(false);
-                }}
-                className="bg-green-600 hover:bg-green-700 text-white w-full"
-                size="sm"
-              >
-                <Coins className="h-4 w-4 mr-1" />
-                Withdraw
-              </Button>
-
-              <Button
-                onClick={() => {
-                  onMyVideos();
-                  setMobileMenuOpen(false);
-                }}
-                variant="outline"
-                className="border-gray-600 text-gray-300 hover:bg-gray-700 w-full"
-                size="sm"
-              >
-                <Video className="h-4 w-4 mr-1" />
-                My Videos
-              </Button>
-              
-              <Button
-                onClick={() => {
-                  onUpload();
-                  setMobileMenuOpen(false);
-                }}
-                className="bg-red-600 hover:bg-red-700 text-white w-full"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Upload
-              </Button>
-              
-              <div className="flex items-center justify-between pt-2 border-t border-gray-700">
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                    <span className="text-sm text-white">
-                      {user.email?.[0]?.toUpperCase()}
-                    </span>
-                  </div>
-                  <span className="text-gray-300 text-sm">{user.email}</span>
-                </div>
-                <Button
-                  onClick={() => {
-                    onSignOut();
-                    setMobileMenuOpen(false);
-                  }}
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-300 hover:text-white"
-                >
-                  Sign Out
-                </Button>
-              </div>
-            </div>
-          ) : (
+      {/* Mobile Bottom Navigation */}
+      {user && (
+        <nav className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-2 md:hidden z-50">
+          <div className="grid grid-cols-5 gap-1">
             <Button
-              onClick={() => {
-                onSignIn();
-                setMobileMenuOpen(false);
-              }}
-              className="bg-red-600 hover:bg-red-700 text-white w-full"
+              variant="ghost"
+              size="sm"
+              className="flex flex-col items-center py-2 text-gray-400 hover:text-white"
+              onClick={() => window.location.href = '/'}
             >
-              Sign In
+              <Home className="h-5 w-5 mb-1" />
+              <span className="text-xs">Home</span>
             </Button>
-          )}
-        </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex flex-col items-center py-2 text-gray-400 hover:text-white"
+              onClick={onMyVideos}
+            >
+              <Video className="h-5 w-5 mb-1" />
+              <span className="text-xs">Videos</span>
+            </Button>
+
+            <Button
+              onClick={onUpload}
+              className="flex flex-col items-center py-2 bg-red-600 hover:bg-red-700 rounded-full -mt-4 shadow-lg"
+            >
+              <Upload className="h-6 w-6" />
+              <span className="text-xs">Upload</span>
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex flex-col items-center py-2 text-gray-400 hover:text-white"
+              onClick={onClaimReward}
+            >
+              <Gift className="h-5 w-5 mb-1" />
+              <span className="text-xs">Rewards</span>
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex flex-col items-center py-2 text-gray-400 hover:text-white"
+              onClick={onWithdraw}
+            >
+              <Coins className="h-5 w-5 mb-1" />
+              <span className="text-xs">Withdraw</span>
+            </Button>
+          </div>
+        </nav>
       )}
-    </header>
+    </>
   );
 };
 
