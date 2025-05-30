@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
@@ -22,6 +21,7 @@ const Index = () => {
   const [showMyVideos, setShowMyVideos] = useState(false);
   const [showUploadAd, setShowUploadAd] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     // Get initial session
@@ -78,10 +78,11 @@ const Index = () => {
         onClaimReward={handleClaimReward}
         onWithdraw={() => setShowWithdrawModal(true)}
         onMyVideos={() => setShowMyVideos(true)}
+        onMenu={() => setSidebarOpen(true)}
       />
       
       <div className="flex min-h-[calc(100vh-80px)]">
-        <Sidebar />
+        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <main className="flex-1 p-3 md:p-6">
           {showMyVideos && user ? (
             <div className="space-y-4 md:space-y-6">

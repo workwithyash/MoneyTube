@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Upload, User, Video, Coins, Menu } from "lucide-react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -13,9 +12,10 @@ interface HeaderProps {
   onClaimReward: () => void;
   onWithdraw: () => void;
   onMyVideos: () => void;
+  onMenu?: () => void;
 }
 
-const Header = ({ user, onSignIn, onSignOut, onUpload, onClaimReward, onWithdraw, onMyVideos }: HeaderProps) => {
+const Header = ({ user, onSignIn, onSignOut, onUpload, onClaimReward, onWithdraw, onMyVideos, onMenu }: HeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -96,7 +96,7 @@ const Header = ({ user, onSignIn, onSignOut, onUpload, onClaimReward, onWithdraw
         <div className="md:hidden flex items-center space-x-2">
           {user && <CoinsDisplay user={user} />}
           <Button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={onMenu ? onMenu : () => setMobileMenuOpen(!mobileMenuOpen)}
             variant="ghost"
             size="sm"
             className="text-gray-300 hover:text-white"
