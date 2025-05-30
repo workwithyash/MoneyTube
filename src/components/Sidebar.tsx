@@ -1,4 +1,4 @@
-import { Home, TrendingUp, Library, History } from "lucide-react";
+import { Home, TrendingUp, Library, History, X } from "lucide-react";
 
 interface SidebarProps {
   open?: boolean;
@@ -27,6 +27,16 @@ const Sidebar = ({ open = false, onClose }: SidebarProps) => {
           ${open ? "translate-x-0" : "-translate-x-full"} md:min-h-screen`}
         style={{ maxWidth: 280 }}
       >
+        {/* Close button for mobile */}
+        {open && onClose && (
+          <button
+            className="absolute top-3 right-3 md:hidden text-gray-400 hover:text-white"
+            onClick={onClose}
+            aria-label="Close sidebar"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        )}
         <nav className="space-y-2 mt-12 md:mt-0">
           {menuItems.map((item) => {
             const Icon = item.icon;
