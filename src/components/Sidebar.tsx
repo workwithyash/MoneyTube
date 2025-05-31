@@ -12,7 +12,6 @@ interface SidebarProps {
   onClaimReward?: () => void;
   onWithdraw?: () => void;
   onMyVideos?: () => void;
-  onReferral?: () => void;
 }
 
 const Sidebar = ({ 
@@ -24,8 +23,7 @@ const Sidebar = ({
   onUpload, 
   onClaimReward, 
   onWithdraw, 
-  onMyVideos,
-  onReferral 
+  onMyVideos
 }: SidebarProps) => {
   return (
     <>
@@ -108,18 +106,6 @@ const Sidebar = ({
                   >
                     <Coins className="h-5 w-5 mr-3" />
                     Withdraw
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800"
-                    onClick={() => {
-                      onReferral?.();
-                      onClose();
-                    }}
-                  >
-                    <Share2 className="h-5 w-5 mr-3" />
-                    Referral
                   </Button>
 
                   <Button

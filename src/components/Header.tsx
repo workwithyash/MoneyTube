@@ -12,11 +12,10 @@ interface HeaderProps {
   onClaimReward: () => void;
   onWithdraw: () => void;
   onMyVideos: () => void;
-  onReferral: () => void;
   onMenu?: () => void;
 }
 
-const Header = ({ user, onSignIn, onSignOut, onUpload, onClaimReward, onWithdraw, onMyVideos, onReferral, onMenu }: HeaderProps) => {
+const Header = ({ user, onSignIn, onSignOut, onUpload, onClaimReward, onWithdraw, onMyVideos, onMenu }: HeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -52,7 +51,7 @@ const Header = ({ user, onSignIn, onSignOut, onUpload, onClaimReward, onWithdraw
 
       {/* Mobile Bottom Navigation */}
       <nav className="bottom-nav fixed bottom-0 left-0 w-full bg-gray-900 border-t border-gray-800 md:hidden z-30">
-        <div className="grid grid-cols-6">
+        <div className="grid grid-cols-5">
           <button className="nav-item flex flex-col items-center py-2" onClick={() => window.location.pathname = "/"}>
             <Home className="nav-icon h-6 w-6" />
             <span className="nav-label text-xs">Home</span>
@@ -68,10 +67,6 @@ const Header = ({ user, onSignIn, onSignOut, onUpload, onClaimReward, onWithdraw
           <button className="nav-item flex flex-col items-center py-2" onClick={onWithdraw}>
             <Coins className="nav-icon h-6 w-6" />
             <span className="nav-label text-xs">Withdraw</span>
-          </button>
-          <button className="nav-item flex flex-col items-center py-2" onClick={onReferral}>
-            <Share2 className="nav-icon h-6 w-6" />
-            <span className="nav-label text-xs">Referral</span>
           </button>
           {user ? (
             <button className="nav-item flex flex-col items-center py-2" onClick={onSignOut}>
@@ -97,9 +92,6 @@ const Header = ({ user, onSignIn, onSignOut, onUpload, onClaimReward, onWithdraw
             {user && <CoinsDisplay user={user} />}
             {user ? (
               <div className="flex items-center space-x-4">
-                <Button onClick={onReferral} className="bg-purple-600 hover:bg-purple-700 text-white" size="sm">
-                  <Share2 className="h-4 w-4 mr-1" />Referral
-                </Button>
                 <Button onClick={onClaimReward} className="bg-yellow-600 hover:bg-yellow-700 text-white" size="sm">🎁 Claim Reward</Button>
                 <Button onClick={onWithdraw} className="bg-green-600 hover:bg-green-700 text-white" size="sm"><Coins className="h-4 w-4 mr-1" />Withdraw</Button>
                 <Button onClick={onMyVideos} variant="outline" size="sm" className="border-gray-600 text-gray-300 hover:bg-gray-700"><Video className="h-4 w-4 mr-1" />My Videos</Button>

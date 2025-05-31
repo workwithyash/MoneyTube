@@ -80,7 +80,6 @@ const Index = () => {
         onClaimReward={handleClaimReward}
         onWithdraw={() => setShowWithdrawModal(true)}
         onMyVideos={() => setShowMyVideos(true)}
-        onReferral={() => setShowReferralModal(true)}
         onMenu={() => setSidebarOpen(true)}
       />
       
@@ -95,7 +94,6 @@ const Index = () => {
           onClaimReward={handleClaimReward}
           onWithdraw={() => setShowWithdrawModal(true)}
           onMyVideos={() => setShowMyVideos(true)}
-          onReferral={() => setShowReferralModal(true)}
         />
         <main className="flex-1 p-3 md:p-6">
           {showMyVideos && user ? (
