@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -213,9 +212,16 @@ const VideoPlayer = () => {
                 controls
                 className="w-full aspect-video"
                 poster={video.thumbnail_url || undefined}
+                playsInline
+                controlsList="nodownload"
+                preload="metadata"
               >
                 <source src={video.video_url} type="video/mp4" />
-                Your browser does not support the video tag.
+                <source src={video.video_url} type="video/webm" />
+                <source src={video.video_url} type="video/ogg" />
+                <p className="text-white p-4 text-center">
+                  Your browser does not support HTML5 video. Please try a different browser.
+                </p>
               </video>
             ) : (
               <div className="w-full aspect-video flex items-center justify-center bg-gray-800">

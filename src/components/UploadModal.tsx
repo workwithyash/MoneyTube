@@ -222,7 +222,7 @@ const UploadModal = ({ user, onClose }: UploadModalProps) => {
                 <div>
                   <Upload className="h-12 w-12 text-gray-500 mx-auto mb-4" />
                   <p className="text-gray-400 mb-2">Select a video file to upload</p>
-                  <p className="text-gray-500 text-sm">MP4, WebM, AVI up to 100MB</p>
+                  <p className="text-gray-500 text-sm">MP4, WebM, AVI up to 5GB</p>
                 </div>
               )}
               <input
