@@ -28,14 +28,17 @@ const AuthModal = ({ onClose }: AuthModalProps) => {
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email,
           password,
-          options: {
-            data: {
-              username,
-            },
-          },
+          options: { data: { username } }
         });
 
         if (authError) throw authError;
+
+        await supabase.from("profiles").insert({
+          id: authData.user.id,
+          username,
+          email,
+          coins: 0,
+        });
 
         toast({
           title: "Account created!",
