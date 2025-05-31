@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Upload, Video, Coins, Home, Gift, Bell, Menu } from "lucide-react";
+import { Upload, Video, Coins, Home, Gift, Bell, Menu, Share2 } from "lucide-react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import CoinsDisplay from "./CoinsDisplay";
 import { useState } from "react";
@@ -12,10 +12,11 @@ interface HeaderProps {
   onClaimReward: () => void;
   onWithdraw: () => void;
   onMyVideos: () => void;
+  onReferral: () => void;
   onMenu?: () => void;
 }
 
-const Header = ({ user, onSignIn, onSignOut, onUpload, onClaimReward, onWithdraw, onMyVideos, onMenu }: HeaderProps) => {
+const Header = ({ user, onSignIn, onSignOut, onUpload, onClaimReward, onWithdraw, onMyVideos, onReferral, onMenu }: HeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -82,7 +83,7 @@ const Header = ({ user, onSignIn, onSignOut, onUpload, onClaimReward, onWithdraw
         </div>
       </nav>
 
-      {/* Desktop Header (existing) */}
+      {/* Desktop Header */}
       <header className="hidden md:block bg-gray-900 border-b border-gray-800 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -92,6 +93,9 @@ const Header = ({ user, onSignIn, onSignOut, onUpload, onClaimReward, onWithdraw
             {user && <CoinsDisplay user={user} />}
             {user ? (
               <div className="flex items-center space-x-4">
+                <Button onClick={onReferral} className="bg-purple-600 hover:bg-purple-700 text-white" size="sm">
+                  <Share2 className="h-4 w-4 mr-1" />Referral
+                </Button>
                 <Button onClick={onClaimReward} className="bg-yellow-600 hover:bg-yellow-700 text-white" size="sm">🎁 Claim Reward</Button>
                 <Button onClick={onWithdraw} className="bg-green-600 hover:bg-green-700 text-white" size="sm"><Coins className="h-4 w-4 mr-1" />Withdraw</Button>
                 <Button onClick={onMyVideos} variant="outline" size="sm" className="border-gray-600 text-gray-300 hover:bg-gray-700"><Video className="h-4 w-4 mr-1" />My Videos</Button>

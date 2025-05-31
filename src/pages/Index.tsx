@@ -9,6 +9,7 @@ import AuthModal from "@/components/AuthModal";
 import UploadModal from "@/components/UploadModal";
 import ClaimRewardModal from "@/components/ClaimRewardModal";
 import WithdrawModal from "@/components/WithdrawModal";
+import ReferralModal from "@/components/ReferralModal";
 import MyVideosPage from "@/components/MyVideosPage";
 import RewardedAd from "@/components/RewardedAd";
 
@@ -18,6 +19,7 @@ const Index = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showClaimRewardModal, setShowClaimRewardModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [showReferralModal, setShowReferralModal] = useState(false);
   const [showMyVideos, setShowMyVideos] = useState(false);
   const [showUploadAd, setShowUploadAd] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -78,6 +80,7 @@ const Index = () => {
         onClaimReward={handleClaimReward}
         onWithdraw={() => setShowWithdrawModal(true)}
         onMyVideos={() => setShowMyVideos(true)}
+        onReferral={() => setShowReferralModal(true)}
         onMenu={() => setSidebarOpen(true)}
       />
       
@@ -135,6 +138,13 @@ const Index = () => {
         <WithdrawModal
           user={user}
           onClose={() => setShowWithdrawModal(false)}
+        />
+      )}
+
+      {showReferralModal && user && (
+        <ReferralModal
+          user={user}
+          onClose={() => setShowReferralModal(false)}
         />
       )}
     </div>

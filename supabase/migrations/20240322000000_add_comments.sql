@@ -2,7 +2,7 @@
 CREATE TABLE public.comments (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     video_id UUID REFERENCES public.videos(id) ON DELETE CASCADE,
-    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
     likes_count INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE public.comments (
 CREATE TABLE public.comment_likes (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     comment_id UUID REFERENCES public.comments(id) ON DELETE CASCADE,
-    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     UNIQUE(comment_id, user_id)
 );
@@ -58,11 +58,11 @@ RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
         UPDATE public.comments
-        SET likes_count = likes_count + 1
+        SET likes_count = COALESCE(likes_count, 0) + 1
         WHERE id = NEW.comment_id;
     ELSIF TG_OP = 'DELETE' THEN
         UPDATE public.comments
-        SET likes_count = likes_count - 1
+        SET likes_count = GREATEST(COALESCE(likes_count, 0) - 1, 0)
         WHERE id = OLD.comment_id;
     END IF;
     RETURN NULL;
@@ -70,12 +70,20 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Create triggers for likes count
+DROP TRIGGER IF EXISTS update_comment_likes_count_insert ON public.comment_likes;
 CREATE TRIGGER update_comment_likes_count_insert
     AFTER INSERT ON public.comment_likes
     FOR EACH ROW
     EXECUTE FUNCTION update_comment_likes_count();
 
+DROP TRIGGER IF EXISTS update_comment_likes_count_delete ON public.comment_likes;
 CREATE TRIGGER update_comment_likes_count_delete
     AFTER DELETE ON public.comment_likes
     FOR EACH ROW
-    EXECUTE FUNCTION update_comment_likes_count(); 
+    EXECUTE FUNCTION update_comment_likes_count();
+
+-- Add indexes for better performance
+CREATE INDEX IF NOT EXISTS comments_video_id_idx ON public.comments(video_id);
+CREATE INDEX IF NOT EXISTS comments_user_id_idx ON public.comments(user_id);
+CREATE INDEX IF NOT EXISTS comment_likes_comment_id_idx ON public.comment_likes(comment_id);
+CREATE INDEX IF NOT EXISTS comment_likes_user_id_idx ON public.comment_likes(user_id); 
