@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AdminLoginProps {
   onLoginSuccess: () => void;
@@ -11,23 +12,39 @@ interface AdminLoginProps {
 const AdminLogin = ({ onLoginSuccess }: AdminLoginProps) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (username === "admin999" && password === "admin666") {
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: 'admin999@gmail.com',
+        password: password,
+      });
+
+      if (error) throw error;
+
+      // Verify that the logged-in user is the admin
+      if (data.user?.email !== 'admin999@gmail.com') {
+        throw new Error('Unauthorized access');
+      }
+
       onLoginSuccess();
       toast({
         title: "Success",
         description: "Admin login successful",
       });
-    } else {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Invalid admin credentials",
+        description: error.message || "Invalid admin credentials",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,6 +62,7 @@ const AdminLogin = ({ onLoginSuccess }: AdminLoginProps) => {
             onChange={(e) => setUsername(e.target.value)}
             className="w-full bg-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             placeholder="Enter admin username"
+            required
           />
         </div>
         <div>
@@ -57,13 +75,15 @@ const AdminLogin = ({ onLoginSuccess }: AdminLoginProps) => {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full bg-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             placeholder="Enter admin password"
+            required
           />
         </div>
         <Button
           type="submit"
           className="w-full bg-red-600 hover:bg-red-700 text-white"
+          disabled={loading}
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </Button>
       </form>
     </div>
