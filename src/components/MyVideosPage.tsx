@@ -1,11 +1,12 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Tables } from "@/integrations/supabase/types";
-import { Calendar, Eye, TrendingUp } from "lucide-react";
+import { Calendar, Eye, TrendingUp, Trash2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface MyVideosPageProps {
   user: User;
@@ -18,6 +19,8 @@ const MyVideosPage = ({ user }: MyVideosPageProps) => {
   const [userCoins, setUserCoins] = useState(0);
   const [totalViews, setTotalViews] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [deletingVideoId, setDeletingVideoId] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchUserVideos();
@@ -64,6 +67,72 @@ const MyVideosPage = ({ user }: MyVideosPageProps) => {
       console.error("Error fetching user stats:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteVideo = async (videoId: string) => {
+    if (!confirm("Are you sure you want to delete this video? This action cannot be undone.")) {
+      return;
+    }
+
+    setDeletingVideoId(videoId);
+
+    try {
+      // Get video data to delete files from storage
+      const { data: videoData, error: videoError } = await supabase
+        .from("videos")
+        .select("video_url, thumbnail_url")
+        .eq("id", videoId)
+        .single();
+
+      if (videoError) throw videoError;
+
+      // Delete video file from storage
+      if (videoData.video_url) {
+        const videoPath = videoData.video_url.split("/").pop();
+        if (videoPath) {
+          await supabase.storage
+            .from("videos")
+            .remove([videoPath]);
+        }
+      }
+
+      // Delete thumbnail file from storage
+      if (videoData.thumbnail_url) {
+        const thumbnailPath = videoData.thumbnail_url.split("/").pop();
+        if (thumbnailPath) {
+          await supabase.storage
+            .from("thumbnails")
+            .remove([thumbnailPath]);
+        }
+      }
+
+      // Delete video record from database
+      const { error: deleteError } = await supabase
+        .from("videos")
+        .delete()
+        .eq("id", videoId);
+
+      if (deleteError) throw deleteError;
+
+      // Update local state
+      setVideos(videos.filter(v => v.id !== videoId));
+      
+      toast({
+        title: "Success",
+        description: "Video has been deleted successfully",
+      });
+
+      // Refresh stats
+      fetchUserStats();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setDeletingVideoId(null);
     }
   };
 
@@ -134,6 +203,23 @@ const MyVideosPage = ({ user }: MyVideosPageProps) => {
                       <div className="text-gray-500 text-2xl md:text-4xl">🎥</div>
                     </div>
                   )}
+                  {/* Delete Button */}
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteVideo(video.id);
+                    }}
+                    variant="destructive"
+                    size="sm"
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                    disabled={deletingVideoId === video.id}
+                  >
+                    {deletingVideoId === video.id ? (
+                      "Deleting..."
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </Button>
                 </div>
 
                 {/* Video Info */}
