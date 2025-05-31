@@ -37,18 +37,6 @@ const AuthModal = ({ onClose }: AuthModalProps) => {
 
         if (authError) throw authError;
 
-        // Create profile
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .insert({
-            id: authData.user!.id,
-            username,
-            email,
-            coins: 0,
-          });
-
-        if (profileError) throw profileError;
-
         toast({
           title: "Account created!",
           description: "Your account has been created successfully.",
