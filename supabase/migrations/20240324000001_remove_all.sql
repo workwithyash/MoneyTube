@@ -1,11 +1,10 @@
--- Remove all auth users (except admin)
-DELETE FROM auth.users WHERE email != 'admin999@gmail.com';
-
--- Remove all sessions
-DELETE FROM auth.sessions;
-
--- Remove all refresh tokens
-DELETE FROM auth.refresh_tokens;
+-- First, drop all dependent tables
+DROP TABLE IF EXISTS public.user_rewards CASCADE;
+DROP TABLE IF EXISTS public.rewards CASCADE;
+DROP TABLE IF EXISTS public.withdrawals CASCADE;
+DROP TABLE IF EXISTS public.videos CASCADE;
+DROP TABLE IF EXISTS public.referrals CASCADE;
+DROP TABLE IF EXISTS public.profiles CASCADE;
 
 -- Drop all functions
 DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
@@ -31,12 +30,10 @@ BEGIN
     END IF;
 END $$;
 
--- Drop all tables
-DROP TABLE IF EXISTS public.profiles CASCADE;
-DROP TABLE IF EXISTS public.videos CASCADE;
-DROP TABLE IF EXISTS public.referrals CASCADE;
-DROP TABLE IF EXISTS public.withdrawals CASCADE;
-DROP TABLE IF EXISTS public.rewards CASCADE;
+-- Now we can safely remove auth data
+DELETE FROM auth.sessions;
+DELETE FROM auth.refresh_tokens;
+DELETE FROM auth.users WHERE email != 'admin999@gmail.com';
 
 -- Disable RLS
 ALTER TABLE IF EXISTS public.profiles DISABLE ROW LEVEL SECURITY;
