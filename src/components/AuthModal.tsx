@@ -158,4 +158,4 @@ const AuthModal = ({ onClose }: AuthModalProps) => {
   );
 };
 
-export default AuthModal;
+export default AuthModal; 
