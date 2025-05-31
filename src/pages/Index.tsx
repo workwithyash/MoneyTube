@@ -85,7 +85,18 @@ const Index = () => {
       />
       
       <div className="flex min-h-[calc(100vh-80px)]">
-        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <Sidebar 
+          open={sidebarOpen} 
+          onClose={() => setSidebarOpen(false)} 
+          user={user}
+          onSignIn={() => setShowAuthModal(true)}
+          onSignOut={handleSignOut}
+          onUpload={handleUpload}
+          onClaimReward={handleClaimReward}
+          onWithdraw={() => setShowWithdrawModal(true)}
+          onMyVideos={() => setShowMyVideos(true)}
+          onReferral={() => setShowReferralModal(true)}
+        />
         <main className="flex-1 p-3 md:p-6">
           {showMyVideos && user ? (
             <div className="space-y-4 md:space-y-6">

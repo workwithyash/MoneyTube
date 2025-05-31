@@ -1,61 +1,166 @@
-import { Home, TrendingUp, Library, History, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { X, Home, Video, Gift, Coins, Share2 } from "lucide-react";
+import { User as SupabaseUser } from "@supabase/supabase-js";
 
 interface SidebarProps {
-  open?: boolean;
-  onClose?: () => void;
+  open: boolean;
+  onClose: () => void;
+  user?: SupabaseUser | null;
+  onSignIn?: () => void;
+  onSignOut?: () => void;
+  onUpload?: () => void;
+  onClaimReward?: () => void;
+  onWithdraw?: () => void;
+  onMyVideos?: () => void;
+  onReferral?: () => void;
 }
 
-const Sidebar = ({ open = false, onClose }: SidebarProps) => {
-  const menuItems = [
-    { icon: Home, label: "Home", active: true },
-    { icon: TrendingUp, label: "Trending" },
-    { icon: Library, label: "Library" },
-    { icon: History, label: "History" },
-  ];
-
+const Sidebar = ({ 
+  open, 
+  onClose, 
+  user, 
+  onSignIn, 
+  onSignOut, 
+  onUpload, 
+  onClaimReward, 
+  onWithdraw, 
+  onMyVideos,
+  onReferral 
+}: SidebarProps) => {
   return (
     <>
-      {/* Overlay for mobile drawer */}
+      {/* Overlay */}
       {open && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-40 z-40 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
           onClick={onClose}
         />
       )}
-      <aside
-        className={`fixed z-50 top-0 left-0 h-full w-64 bg-gray-800 p-4 transform transition-transform duration-200 md:static md:translate-x-0 md:block
-          ${open ? "translate-x-0" : "-translate-x-full"} md:min-h-screen`}
-        style={{ maxWidth: 280 }}
+
+      {/* Sidebar */}
+      <div
+        className={`fixed top-0 left-0 h-full w-64 bg-gray-900 transform transition-transform duration-200 ease-in-out z-50 md:translate-x-0 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
-        {/* Close button for mobile */}
-        {open && onClose && (
-          <button
-            className="absolute top-3 right-3 md:hidden text-gray-400 hover:text-white"
-            onClick={onClose}
-            aria-label="Close sidebar"
-          >
-            <X className="h-6 w-6" />
-          </button>
-        )}
-        <nav className="space-y-2 mt-12 md:mt-0">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={item.label}
-                className={`flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-colors ${
-                  item.active
-                    ? "bg-red-600 text-white"
-                    : "text-gray-300 hover:bg-gray-700"
-                }`}
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-800">
+            <h2 className="text-xl font-bold text-white">Menu</h2>
+            <Button
+              onClick={onClose}
+              variant="ghost"
+              size="sm"
+              className="text-gray-400 hover:text-white md:hidden"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 overflow-y-auto p-4">
+            <div className="space-y-2">
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800"
+                onClick={() => {
+                  window.location.pathname = "/";
+                  onClose();
+                }}
               >
-                <Icon className="h-5 w-5" />
-                <span>{item.label}</span>
-              </div>
-            );
-          })}
-        </nav>
-      </aside>
+                <Home className="h-5 w-5 mr-3" />
+                Home
+              </Button>
+
+              {user ? (
+                <>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800"
+                    onClick={() => {
+                      onMyVideos?.();
+                      onClose();
+                    }}
+                  >
+                    <Video className="h-5 w-5 mr-3" />
+                    My Videos
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800"
+                    onClick={() => {
+                      onClaimReward?.();
+                      onClose();
+                    }}
+                  >
+                    <Gift className="h-5 w-5 mr-3" />
+                    Claim Reward
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800"
+                    onClick={() => {
+                      onWithdraw?.();
+                      onClose();
+                    }}
+                  >
+                    <Coins className="h-5 w-5 mr-3" />
+                    Withdraw
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800"
+                    onClick={() => {
+                      onReferral?.();
+                      onClose();
+                    }}
+                  >
+                    <Share2 className="h-5 w-5 mr-3" />
+                    Referral
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800"
+                    onClick={() => {
+                      onUpload?.();
+                      onClose();
+                    }}
+                  >
+                    <Video className="h-5 w-5 mr-3" />
+                    Upload Video
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-gray-800"
+                    onClick={() => {
+                      onSignOut?.();
+                      onClose();
+                    }}
+                  >
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800"
+                  onClick={() => {
+                    onSignIn?.();
+                    onClose();
+                  }}
+                >
+                  Sign In
+                </Button>
+              )}
+            </div>
+          </nav>
+        </div>
+      </div>
     </>
   );
 };
