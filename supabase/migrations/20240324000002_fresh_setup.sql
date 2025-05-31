@@ -37,11 +37,49 @@ CREATE TABLE public.rewards (
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
 );
 
+-- Create fresh ad_watches table
+CREATE TABLE public.ad_watches (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  video_id uuid REFERENCES public.videos(id) ON DELETE CASCADE,
+  watched_at timestamp with time zone DEFAULT timezone('utc'::text, now())
+);
+
+-- Create fresh views table
+CREATE TABLE public.views (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  video_id uuid REFERENCES public.videos(id) ON DELETE CASCADE,
+  viewed_at timestamp with time zone DEFAULT timezone('utc'::text, now())
+);
+
+-- Create fresh likes table
+CREATE TABLE public.likes (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  video_id uuid REFERENCES public.videos(id) ON DELETE CASCADE,
+  created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
+  UNIQUE(user_id, video_id)
+);
+
+-- Create fresh comments table
+CREATE TABLE public.comments (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  video_id uuid REFERENCES public.videos(id) ON DELETE CASCADE,
+  content text NOT NULL,
+  created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
+);
+
 -- Enable RLS
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.videos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.withdrawals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.rewards ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ad_watches ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.views ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.likes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for profiles
 CREATE POLICY "Users can view their own profile"
@@ -90,6 +128,54 @@ CREATE POLICY "Users can view their own rewards"
 CREATE POLICY "Users can insert their own rewards"
   ON public.rewards FOR INSERT
   WITH CHECK (auth.uid() = user_id);
+
+-- Create policies for ad_watches
+CREATE POLICY "Users can view their own ad watches"
+  ON public.ad_watches FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own ad watches"
+  ON public.ad_watches FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+-- Create policies for views
+CREATE POLICY "Users can view their own views"
+  ON public.views FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own views"
+  ON public.views FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+-- Create policies for likes
+CREATE POLICY "Users can view their own likes"
+  ON public.likes FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own likes"
+  ON public.likes FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own likes"
+  ON public.likes FOR DELETE
+  USING (auth.uid() = user_id);
+
+-- Create policies for comments
+CREATE POLICY "Anyone can view comments"
+  ON public.comments FOR SELECT
+  USING (true);
+
+CREATE POLICY "Users can insert their own comments"
+  ON public.comments FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own comments"
+  ON public.comments FOR UPDATE
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own comments"
+  ON public.comments FOR DELETE
+  USING (auth.uid() = user_id);
 
 -- Create function to handle new user
 CREATE OR REPLACE FUNCTION public.handle_new_user()
