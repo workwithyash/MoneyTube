@@ -9,6 +9,7 @@ import { Tables } from "@/integrations/supabase/types";
 import RewardedAd from "@/components/RewardedAd";
 import MilestoneReward from "@/components/MilestoneReward";
 import { useToast } from "@/hooks/use-toast";
+import Comments from "@/components/Comments";
 
 type Video = Tables<"videos"> & {
   profiles: {
@@ -289,6 +290,11 @@ const VideoPlayer = () => {
                 <p className="text-gray-300 whitespace-pre-wrap">{video.description}</p>
               </div>
             )}
+
+            {/* Comments Section */}
+            <div className="mt-8">
+              <Comments videoId={video.id} />
+            </div>
           </div>
         </div>
       </div>
