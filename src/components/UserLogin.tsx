@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { Database } from "@/types/supabase";
+
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 interface UserLoginProps {
   onLoginSuccess: () => void;
@@ -20,19 +23,23 @@ const UserLogin = ({ onLoginSuccess }: UserLoginProps) => {
     setLoading(true);
 
     try {
+      let email = identifier;
+
       // First try to find the user by username
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select("email")
         .eq("username", identifier)
-        .single();
+        .maybeSingle();
 
-      if (profileError && profileError.code !== "PGRST116") {
+      if (profileError) {
         throw profileError;
       }
 
       // If username found, use the associated email to sign in
-      const email = profileData?.email || identifier;
+      if (profileData) {
+        email = profileData.email;
+      }
 
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -74,6 +81,9 @@ const UserLogin = ({ onLoginSuccess }: UserLoginProps) => {
             placeholder="Enter your email or username"
             required
           />
+          <p className="text-gray-400 text-sm mt-1">
+            You can login with either your email address or username
+          </p>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
