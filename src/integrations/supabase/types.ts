@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type Database = {
+export interface Database {
   public: {
     Tables: {
       ad_watches: {
@@ -33,168 +33,283 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "ad_watches_video_id_fkey"
-            columns: ["video_id"]
-            isOneToOne: false
-            referencedRelation: "videos"
+            foreignKeyName: "ad_watches_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "ad_watches_video_id_fkey"
+            columns: ["video_id"]
+            referencedRelation: "videos"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      comments: {
+        Row: {
+          id: string
+          video_id: string
+          user_id: string
+          content: string
+          likes_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          video_id: string
+          user_id: string
+          content: string
+          likes_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          video_id?: string
+          user_id?: string
+          content?: string
+          likes_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_video_id_fkey"
+            columns: ["video_id"]
+            referencedRelation: "videos"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      comment_likes: {
+        Row: {
+          id: string
+          comment_id: string
+          user_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          comment_id: string
+          user_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          comment_id?: string
+          user_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_likes_comment_id_fkey"
+            columns: ["comment_id"]
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comment_likes_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
         ]
       }
       daily_uploads: {
         Row: {
           id: string
-          upload_count: number
+          user_id: string
           upload_date: string
-          user_id: string
+          count: number
         }
         Insert: {
           id?: string
-          upload_count?: number
-          upload_date?: string
           user_id: string
+          upload_date: string
+          count?: number
         }
         Update: {
           id?: string
-          upload_count?: number
-          upload_date?: string
           user_id?: string
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          avatar_url: string | null
-          coins: number
-          created_at: string | null
-          id: string
-          username: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          coins?: number
-          created_at?: string | null
-          id: string
-          username?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          coins?: number
-          created_at?: string | null
-          id?: string
-          username?: string | null
-        }
-        Relationships: []
-      }
-      user_rewards: {
-        Row: {
-          coins_earned: number
-          created_at: string
-          id: string
-          reward_type: string
-          user_id: string
-          video_id: string | null
-        }
-        Insert: {
-          coins_earned?: number
-          created_at?: string
-          id?: string
-          reward_type: string
-          user_id: string
-          video_id?: string | null
-        }
-        Update: {
-          coins_earned?: number
-          created_at?: string
-          id?: string
-          reward_type?: string
-          user_id?: string
-          video_id?: string | null
+          upload_date?: string
+          count?: number
         }
         Relationships: [
           {
-            foreignKeyName: "user_rewards_video_id_fkey"
-            columns: ["video_id"]
-            isOneToOne: false
-            referencedRelation: "videos"
+            foreignKeyName: "daily_uploads_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      profiles: {
+        Row: {
+          id: string
+          username: string | null
+          email: string
+          avatar_url: string | null
+          coins: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          username?: string | null
+          email: string
+          avatar_url?: string | null
+          coins?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          username?: string | null
+          email?: string
+          avatar_url?: string | null
+          coins?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      user_rewards: {
+        Row: {
+          id: string
+          user_id: string
+          video_id: string
+          reward_type: string
+          coins_earned: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          video_id: string
+          reward_type: string
+          coins_earned: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          video_id?: string
+          reward_type?: string
+          coins_earned?: number
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_rewards_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "user_rewards_video_id_fkey"
+            columns: ["video_id"]
+            referencedRelation: "videos"
+            referencedColumns: ["id"]
+          }
         ]
       }
       videos: {
         Row: {
-          created_at: string | null
-          description: string | null
-          duration: number | null
           id: string
-          milestone_rewards_claimed: Json | null
-          thumbnail_url: string | null
           title: string
-          updated_at: string | null
-          user_id: string
+          description: string | null
           video_url: string
-          views: number | null
+          thumbnail_url: string | null
+          user_id: string
+          views: number
+          duration: number
+          milestone_rewards_claimed: Json
+          created_at: string
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
-          description?: string | null
-          duration?: number | null
           id?: string
-          milestone_rewards_claimed?: Json | null
-          thumbnail_url?: string | null
           title: string
-          updated_at?: string | null
-          user_id: string
+          description?: string | null
           video_url: string
-          views?: number | null
+          thumbnail_url?: string | null
+          user_id: string
+          views?: number
+          duration: number
+          milestone_rewards_claimed?: Json
+          created_at?: string
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
-          description?: string | null
-          duration?: number | null
           id?: string
-          milestone_rewards_claimed?: Json | null
-          thumbnail_url?: string | null
           title?: string
-          updated_at?: string | null
-          user_id?: string
+          description?: string | null
           video_url?: string
-          views?: number | null
+          thumbnail_url?: string | null
+          user_id?: string
+          views?: number
+          duration?: number
+          milestone_rewards_claimed?: Json
+          created_at?: string
+          updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "videos_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       withdraw_requests: {
         Row: {
-          coins: number
-          created_at: string
           id: string
-          is_confirmed: boolean
-          method: string
-          number: string
-          payout: number
           user_id: string
+          amount: number
+          status: string
+          created_at: string
+          updated_at: string
         }
         Insert: {
-          coins: number
-          created_at?: string
           id?: string
-          is_confirmed?: boolean
-          method: string
-          number: string
-          payout: number
           user_id: string
+          amount: number
+          status?: string
+          created_at?: string
+          updated_at?: string
         }
         Update: {
-          coins?: number
-          created_at?: string
           id?: string
-          is_confirmed?: boolean
-          method?: string
-          number?: string
-          payout?: number
           user_id?: string
+          amount?: number
+          status?: string
+          created_at?: string
+          updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "withdraw_requests_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {
@@ -202,12 +317,17 @@ export type Database = {
     }
     Functions: {
       increment_user_coins: {
-        Args: { user_id: string; coins_to_add: number }
-        Returns: undefined
+        Args: {
+          user_id: string
+          coins_to_add: number
+        }
+        Returns: void
       }
       increment_views: {
-        Args: { video_id: string }
-        Returns: undefined
+        Args: {
+          video_id: string
+        }
+        Returns: void
       }
     }
     Enums: {
